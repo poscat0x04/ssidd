@@ -1,26 +1,26 @@
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
-enum OpState {
+pub enum OpState {
     Auto,
     Up,
     Down,
 }
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
-enum ServiceState{
+pub enum UnitState {
     Up,
     Down,
 }
 
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
-struct State {
-    op_state: OpState,
-    current_state: ServiceState,
-    target_state: ServiceState,
+pub struct State {
+    pub op_state: OpState,
+    pub current_state: UnitState,
+    pub target_state: UnitState,
 }
 
 impl State {
-    fn transition(&mut self, input: Input) {
+    pub fn transition(&mut self, input: Input) {
         match input {
             Input::OpStateUpdate { op_state } => { self.op_state = op_state; }
             Input::CurrentStateUpdate { current_state } => { self.current_state = current_state; }
@@ -28,9 +28,9 @@ impl State {
         }
     }
 
-    fn output(&self) -> Output {
+    pub fn output(&self) -> Output {
         match self {
-            State{
+            State {
                 op_state: OpState::Auto,
                 current_state,
                 target_state,
@@ -40,24 +40,24 @@ impl State {
                 } else {
                     Output::noop()
                 }
-            },
-            State{
+            }
+            State {
                 op_state: OpState::Up,
                 current_state,
                 target_state: _
             } => {
-                if (*current_state == ServiceState::Down) {
+                if (*current_state == UnitState::Down) {
                     Output::up()
                 } else {
                     Output::noop()
                 }
-            },
-            State{
+            }
+            State {
                 op_state: OpState::Down,
                 current_state,
                 target_state: _
             } => {
-                if (*current_state == ServiceState::Up) {
+                if (*current_state == UnitState::Up) {
                     Output::down()
                 } else {
                     Output::noop()
@@ -68,29 +68,29 @@ impl State {
 }
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
-enum Input {
-    OpStateUpdate{
+pub enum Input {
+    OpStateUpdate {
         op_state: OpState
     },
     CurrentStateUpdate {
-        current_state: ServiceState
+        current_state: UnitState
     },
     TargetStateUpdate {
-        target_state: ServiceState
+        target_state: UnitState
     },
 }
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
-struct Output {
-    new_service_state: Option<ServiceState>,
+pub struct Output {
+    pub new_state: Option<UnitState>,
 }
 
 impl Output {
-    fn noop() -> Self { return Output { new_service_state: None} }
+    fn noop() -> Self { return Output { new_state: None }; }
 
-    fn up() -> Self { return Output { new_service_state: Some(ServiceState::Up) } }
+    fn up() -> Self { return Output { new_state: Some(UnitState::Up) }; }
 
-    fn down() -> Self { return Output { new_service_state: Some(ServiceState::Down) } }
+    fn down() -> Self { return Output { new_state: Some(UnitState::Down) }; }
 
-    fn state(service_state: &ServiceState) -> Self { return Output { new_service_state: Some(*service_state) } }
+    fn state(service_state: &UnitState) -> Self { return Output { new_state: Some(*service_state) }; }
 }

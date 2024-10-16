@@ -16,6 +16,9 @@ zbus_systemd = "0.25600"
 zbus = "4.4"
 tracing = "0.1"
 tracing-journald = "0.3"
+serde = { version = "1.0.210", features = ["derive"] }
+regex = "1.11"
+ipnet = { version = "2.10", features = ["serde"] }
 
 [lib]
 path = "src/lib.rs"
