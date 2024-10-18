@@ -1,8 +1,22 @@
+#[repr(u8)]
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub enum OpState {
-    Auto,
-    Up,
-    Down,
+    Auto = 0,
+    Up = 1,
+    Down = 2,
+}
+
+impl TryFrom<u8> for OpState {
+    type Error = ();
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(Self::Auto),
+            1 => Ok(Self::Up),
+            2 => Ok(Self::Down),
+            _ => Err(()),
+        }
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
@@ -35,7 +49,7 @@ impl State {
                 current_state,
                 target_state,
             } => {
-                if (current_state != target_state) {
+                if current_state != target_state {
                     Output::state(target_state)
                 } else {
                     Output::noop()
@@ -46,7 +60,7 @@ impl State {
                 current_state,
                 target_state: _
             } => {
-                if (*current_state == UnitState::Down) {
+                if *current_state == UnitState::Down {
                     Output::up()
                 } else {
                     Output::noop()
@@ -57,7 +71,7 @@ impl State {
                 current_state,
                 target_state: _
             } => {
-                if (*current_state == UnitState::Up) {
+                if *current_state == UnitState::Up {
                     Output::down()
                 } else {
                     Output::noop()

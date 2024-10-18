@@ -86,7 +86,7 @@ where
         {
             let mut regex = None;
             while let Some(key) = map.next_key::<Cow<str>>()? {
-                if (key == "regex") {
+                if key == "regex" {
                     if regex.is_some() {
                         Err(A::Error::duplicate_field("regex"))?
                     }
